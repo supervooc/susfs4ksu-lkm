@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-only
-"""Pack a flashable KernelSU module from a release's .ko set and susfs_insmod.
+"""Pack a flashable KernelSU module from a build's .ko set and susfs_insmod.
 
 Bundles the module scripts, every susfs_guard_lkm-<kmi>.ko found and the loader
 into one ZIP, with a generated kmis list, module.prop and provenance.json. The
-module picks the .ko matching the device kernel at boot and insmods it once.
+module picks the .ko matching the device kernel at boot and insmods it once; an
+optional --kmi-override writes the same file the loader reads first, which lets a
+kernel-specific ZIP (or an advanced operator) skip automatic KMI detection.
 """
 import argparse
 import datetime
@@ -27,6 +29,12 @@ def main():
     ap.add_argument("--insmod", required=True, help="path to the susfs_insmod binary")
     ap.add_argument("--tag", required=True, help="release tag, used as the module version")
     ap.add_argument("--out", required=True, help="output ZIP path")
+    ap.add_argument("--sha", default="", help="commit the module was built from")
+    ap.add_argument("--run-id", default="", help="build-lkm-ddk workflow run id")
+    ap.add_argument("--ddk-images", default="",
+                    help="file holding the JSON list of DDK image references (name@sha256:...)")
+    ap.add_argument("--kmi-override", default="",
+                    help="force this packaged KMI at install/load time (one of the built KMIs)")
     args = ap.parse_args()
 
     ko_dir = Path(args.ko_dir)
@@ -38,6 +46,8 @@ def main():
         raise SystemExit(f"loader not found: {insmod}")
 
     kmis = [re.sub(r"^susfs_guard_lkm-|\.ko$", "", p.name) for p in kos]
+    if args.kmi_override and args.kmi_override not in kmis:
+        raise SystemExit(f"--kmi-override {args.kmi_override!r} is not one of {kmis}")
     # epoch seconds: monotonic so two builds on one day still differ, and within int32 until 2038.
     version_code = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
     low = min(kmis, key=lambda k: tuple(int(n) for n in k.split("-", 1)[1].split("."))).split("-", 1)[1]
@@ -55,11 +65,25 @@ def main():
         f"description=not loaded yet - loads the matching .ko on boot "
         f"({len(kmis)} arm64 KMIs, {low}-{high}). Loader only, no rules.\n"
     )
+    ddk_images = []
+    if args.ddk_images:
+        ddk_images = json.loads(Path(args.ddk_images).read_text())
+        if not isinstance(ddk_images, list):
+            raise SystemExit(f"ddk images file is not a JSON list: {args.ddk_images}")
+
     provenance = {
         "repository": "https://github.com/inforcqb/susfs4ksu-lkm",
         "tag": args.tag,
+        # The provenance has to say which source and which toolchain produced these
+        # bytes; the tag alone ties the ZIP to a name, not to a tree.  Both are
+        # recorded only when the caller supplies them (the host pack test does not).
+        "github_sha": args.sha or None,
+        "github_run_id": int(args.run_id) if args.run_id.isdigit() else None,
+        "build_workflow": ".github/workflows/build-ddk.yml",
+        "ddk_images": ddk_images,
         "architecture": "arm64",
         "supported_kmis": kmis,
+        "kmi_override": args.kmi_override or None,
         "assets_sha256": {p.name: sha256(p) for p in kos} | {insmod.name: sha256(insmod)},
     }
 
@@ -69,6 +93,7 @@ def main():
         for name in ("post-fs-data.sh", "customize.sh", "kmi.sh", "early-dispatch.sh", "load.sh", "uninstall.sh"):
             z.write(ROOT / "module" / name, name)
         z.writestr("kmis", "".join(k + "\n" for k in kmis))
+        z.writestr("kmi_override", args.kmi_override + "\n" if args.kmi_override else "")
         z.writestr("module.prop", module_prop)
         z.write(insmod, "bin/susfs_insmod")
         for p in kos:
