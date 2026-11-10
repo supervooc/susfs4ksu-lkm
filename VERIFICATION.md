@@ -49,8 +49,16 @@ https://supervooc.github.io/susfs4ksu-lkm/
 - 版本号显示实时快照 `v2.3.0-r18.9-1`；
 - 不存在的路径返回 404，命中自定义 404 页。
 
+## 4. 静态版的显示层动态
+
+Pages 上加载 `assets/live.js`：浏览器直接请求 GitHub Releases API，把 hero 里的版本号刷新为最新；
+结果写入 localStorage（10 分钟 TTL），断网 / 限流 / 无 fetch 时静默回退到服务端快照。
+动态部署时不加载该脚本（服务端已经是实时的）。
+
 ## 已知限制
 
 - fork 仓库默认禁用 Actions，需在 Actions 页面手动启用一次；
 - GitHub Pages 只能托管静态产物：`/download/<kmi>` 302、`/api/release` 实时数据、
-  `/api/kmi/*` 只在动态部署（Docker / Render / Fly）时可用，静态版走 GitHub 直链与快照版本号。
+  `/api/kmi/*` 只在动态部署（Docker / Render / Fly）时可用；
+- 静态版版本号靠 `live.js` 在浏览器侧刷新，受 GitHub 匿名 API 限流影响（60 次/小时/IP，
+  有 10 分钟缓存与快照回退）。

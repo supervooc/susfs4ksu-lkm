@@ -20,6 +20,9 @@ def test_index_renders_full_page(client):
     assert html.count('href="/download/') == 8
     assert DEFAULT_TAG in html  # 离线时回退版本号仍然渲染
     assert 'aria-selected="true"' in html
+    assert "data-release-pill" in html
+    assert "data-release-tag" in html
+    assert "assets/live.js" not in html  # 动态渲染不需要客户端刷新
 
 
 def test_index_contains_only_one_h1(client):
@@ -130,5 +133,7 @@ def test_static_export_uses_relative_assets():
     assert 'href="assets/styles.css"' in html
     assert 'src="assets/main.js"' in html
     assert 'href="manifest.webmanifest"' in html
+    assert "data-release-pill" in html
+    assert 'src="assets/live.js"' in html  # 静态版由浏览器刷新版本号
     # 静态导出没有 /download 路由，直接指向 GitHub Release
     assert 'href="https://github.com/inforcqb/susfs4ksu-for-lkm/releases/latest/download/susfs_guard_lkm-android15-6.6.ko"' in html

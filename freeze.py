@@ -12,7 +12,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
+import stat
 import sys
 from pathlib import Path
 
@@ -33,11 +35,30 @@ PAGES = (
 NOT_FOUND_PROBE = "/__freeze_404_probe__"
 
 
+def _force_rmtree(path: Path) -> None:
+    """删除输出目录；兼容 Windows 上 git 对象的只读属性。"""
+
+    def _retry(func, target, exc):
+        try:
+            os.chmod(target, stat.S_IWRITE)
+        except OSError:
+            pass
+        func(target)
+
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(path, onexc=_retry)
+    else:  # pragma: no cover - 兼容 Python 3.11 及更早
+        shutil.rmtree(
+            path,
+            onerror=lambda func, target, exc_info: _retry(func, target, exc_info[1]),
+        )
+
+
 def freeze(out: Path, offline: bool = False) -> list[Path]:
     app = create_app({"STATIC_EXPORT": True, "OFFLINE": offline})
     out = Path(out)
     if out.exists():
-        shutil.rmtree(out)
+        _force_rmtree(out)
     shutil.copytree(ROOT / "app" / "static" / "assets", out / "assets")
 
     written: list[Path] = []

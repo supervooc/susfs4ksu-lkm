@@ -118,8 +118,10 @@ python freeze.py --out public --offline  # 使用回退版本
 `public/` 里是完整静态站（含 `404.html`、`robots.txt`、`sitemap.xml`、`manifest.webmanifest`、`.nojekyll`）。
 把这个目录推到 `gh-pages` 分支即可。注意静态版的差异：
 
-- 版本号是构建时快照，不会自动更新（需要定时重建）；
-- 下载链接直接指向 GitHub Release，不经过 `/download/<kmi>`。
+- 版本号是构建时快照；页面加载时 `assets/live.js` 会再调一次 GitHub Releases API 刷新，
+  带 10 分钟 localStorage 缓存，失败时保留快照值。CI 的定时重建是兜底；
+- 下载链接直接指向 GitHub Release，不经过 `/download/<kmi>`（Pages 没有 302 能力）；
+- `/api/*` 不存在，动态 JSON 接口只在动态部署时可用。
 
 ## 自动化（GitHub Actions）
 

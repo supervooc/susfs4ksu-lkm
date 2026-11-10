@@ -12,6 +12,7 @@ def test_freeze_writes_complete_static_site(tmp_path):
     assert (out / ".nojekyll").exists()
     assert (out / "assets" / "styles.css").exists()
     assert (out / "assets" / "og.png").exists()
+    assert (out / "assets" / "live.js").exists()
     assert len(written) == 6
 
     index = (out / "index.html").read_text(encoding="utf-8")

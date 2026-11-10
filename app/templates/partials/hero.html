@@ -4,8 +4,8 @@
         <div class="hero-copy">
           <div class="hero-badges reveal">
             <span class="eyebrow"><span class="eyebrow-dot"></span>{{ c.HERO_EYEBROW }}</span>
-            <a class="release-pill" href="{{ c.RELEASES_URL }}" target="_blank" rel="noopener noreferrer">
-              {{ c.HERO_RELEASE_LABEL }} <strong>{{ release.tag }}</strong>
+            <a class="release-pill" data-release-pill href="{{ c.RELEASES_URL }}" target="_blank" rel="noopener noreferrer">
+              {{ c.HERO_RELEASE_LABEL }} <strong data-release-tag>{{ release.tag }}</strong>
               {{ icon('arrow-external-12') }}
             </a>
           </div>
