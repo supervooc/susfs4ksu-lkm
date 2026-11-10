@@ -127,13 +127,15 @@ class ReleaseCache:
 
     # -- 网络 ---------------------------------------------------------
     def _fetch(self) -> ReleaseInfo:
-        request = urllib.request.Request(
-            API_URL,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Accept": "application/vnd.github+json",
-            },
-        )
+        headers = {
+            "User-Agent": USER_AGENT,
+            "Accept": "application/vnd.github+json",
+        }
+        # CI / 生产环境可注入 token 提高限流阈值；令牌只进请求头，不会渲染到页面
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if token:
+            headers["Authorization"] = "Bearer " + token
+        request = urllib.request.Request(API_URL, headers=headers)
         with urllib.request.urlopen(request, timeout=self.timeout) as response:
             payload = json.loads(response.read().decode("utf-8"))
         if not isinstance(payload, dict):

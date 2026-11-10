@@ -1,0 +1,20 @@
+# Fly.io 部署配置：处理完 Dockerfile 与 gunicorn 后可直接 fly deploy。
+app = "susfs-guard-lkm-site"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  SITE_OFFLINE = "0"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

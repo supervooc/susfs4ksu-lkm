@@ -121,9 +121,22 @@ python freeze.py --out public --offline  # 使用回退版本
 - 版本号是构建时快照，不会自动更新（需要定时重建）；
 - 下载链接直接指向 GitHub Release，不经过 `/download/<kmi>`。
 
+## 自动化（GitHub Actions）
+
+`.github/workflows/site.yml` 做三件事：
+
+1. **test**：安装依赖 -> `pytest` -> `freeze.py`，静态产物作为 artifact 上传；
+2. **smoke**：在 ubuntu runner 上用 `gunicorn wsgi:app` 起生产进程，实探 `/`、`/api/kmi`、
+   `/api/kmi/resolve` 与 `/download/android15-6.6` 的 302，证明动态版可直接部署；
+3. **deploy**：把冻结产物强制推送到 `gh-pages` 分支，GitHub Pages 随之重建。
+
+触发条件：推送到 `site-python` 分支（限定相关路径）、每周一 03:00 UTC 定时（刷新上游版本号）、
+手动 `workflow_dispatch`。定时任务只读取默认分支的 workflow，因此 `site.yml` 在 `main` 与
+`site-python` 各放一份（内容相同）。
+
 ## 部署
 
-**动态（推荐，Python 为核心）**：
+**动态版（Python 服务，具备实时 Release / 下载重定向 / JSON API）**：
 
 ```bash
 docker build -t susfs-site .
@@ -132,9 +145,18 @@ docker run -p 8000:8000 susfs-site
 gunicorn -b 0.0.0.0:8000 --workers 2 wsgi:app
 ```
 
-也可以直接部署到 Render / Fly.io / Railway / 任意 VPS（WSGI 应用，无状态）。
+- **Render**：仓库自带 `render.yaml`，New -> Blueprint 选中本仓库即可，免费层够用，
+  健康检查走 `/api/health`；
+- **Fly.io**：`fly.toml` 已配置，`fly launch --copy-config` 后 `fly deploy`；
+- 任意 VPS / Railway / Cloud Run：无状态 WSGI 应用，监听 `$PORT` 即可。
 
-**静态**：`python freeze.py` 后托管到 GitHub Pages / Cloudflare Pages / Nginx。
+**静态版（GitHub Pages / Cloudflare Pages / Nginx）**：
+
+```bash
+python freeze.py --out public
+```
+
+`gh-pages` 分支就是这条路径的产物，由 CI 自动更新；手动推送时使用 `--force`。
 
 ## 取舍与风险
 
