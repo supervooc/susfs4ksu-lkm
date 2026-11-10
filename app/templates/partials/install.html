@@ -1,0 +1,52 @@
+    <section class="section install-section" id="install" aria-labelledby="install-title">
+      <div class="container install-grid">
+        <div class="install-copy">
+          <div class="reveal">
+            <span class="section-kicker">{{ c.INSTALL_KICKER }}</span>
+            {% with h=c.INSTALL_HEADLINE, heading_id="install-title" %}{% include "partials/headline.html" %}{% endwith %}
+            <p class="section-lede">{{ inline(c.INSTALL_LEDE) }}</p>
+          </div>
+
+          <ol class="steps reveal">
+            {%- for step in c.STEPS %}
+            <li>
+              <span class="step-num">{{ step.number }}</span>
+              <div>
+                <h3>{{ step.title }}</h3>
+                <p>{{ inline(step.body) }}</p>
+              </div>
+            </li>
+            {%- endfor %}
+          </ol>
+
+          <div class="callout reveal">
+            <span class="callout-icon">
+              {{ icon('callout-info') }}
+            </span>
+            <p><strong>{{ c.INSTALL_CALLOUT_LEAD }}</strong>{{ inline(c.INSTALL_CALLOUT) }}</p>
+          </div>
+        </div>
+
+        <div class="code-panel reveal" data-code-panel>
+          <div class="tabs" role="tablist" aria-label="安装方式">
+            {%- for tab in c.CODE_TABS %}
+            <button class="tab" type="button" role="tab" id="{{ tab.tab_id }}" aria-controls="{{ tab.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ '0' if loop.first else '-1' }}">{{ tab.label }}</button>
+            {%- endfor %}
+          </div>
+
+          {%- for tab in c.CODE_TABS %}
+          <div class="code-pane" id="{{ tab.id }}" role="tabpanel" aria-labelledby="{{ tab.tab_id }}"{% if not loop.first %} hidden{% endif %}>
+            <div class="code-head">
+              <span class="code-label"><span class="code-dot"></span>{{ tab.code_label }}</span>
+              <button class="copy-btn" type="button" data-copy aria-live="polite">复制</button>
+            </div>
+            <pre><code>{{ highlight(tab.code) }}</code></pre>
+            <div class="code-footnote">
+              <span class="mini-dot"></span>
+              {{ inline(tab.footnote) }}
+            </div>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+    </section>

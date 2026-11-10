@@ -1,0 +1,63 @@
+    <section class="section" id="kmi" aria-labelledby="kmi-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="section-kicker">{{ c.KMI_KICKER }}</span>
+            {% with h=c.KMI_HEADLINE, heading_id="kmi-title" %}{% include "partials/headline.html" %}{% endwith %}
+          </div>
+          <p class="reveal">{{ c.KMI_INTRO }}</p>
+        </div>
+
+        <div class="kmi-layout">
+          <div class="kmi-table-wrap reveal">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Android</th>
+                    <th scope="col">GKI</th>
+                    <th scope="col">KMI 变体</th>
+                    <th scope="col"><span class="sr-only">下载</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for row in c.KMI_ROWS %}
+                  <tr>
+                    <td><span class="android-cell"><span class="version-dot"></span>{{ row.android }}</span></td>
+                    <td><code class="kmi-code">{{ row.gki }}</code></td>
+                    <td><code class="kmi-code">{{ row.kmi }}</code></td>
+                    <td class="download-cell"><a class="dl-link" href="{{ download_url(row.kmi) }}">下载 .ko {{ icon('download-14') }}</a></td>
+                  </tr>
+                  {%- endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="kmi-aside reveal">
+            <div class="kmi-check">
+              <span class="check-kicker">{{ c.KMI_CHECK_KICKER }}</span>
+              <h3>{{ c.KMI_CHECK_TITLE }}</h3>
+              <p>{{ inline(c.KMI_CHECK_BODY) }}</p>
+              <div class="check-commands">
+                {%- for command in c.KMI_CHECK_COMMANDS %}
+                <code>{{ command }}</code>
+                {%- endfor %}
+              </div>
+              <div class="check-note">
+                <span class="mini-dot"></span>
+                {{ c.KMI_CHECK_NOTE }}
+              </div>
+            </div>
+
+            <a class="side-link" href="{{ c.KMI_ASIDE_LINK[2] }}" target="_blank" rel="noopener noreferrer">
+              <span>
+                <strong>{{ c.KMI_ASIDE_LINK[0] }}</strong>
+                <small>{{ c.KMI_ASIDE_LINK[1] }}</small>
+              </span>
+              {{ icon('arrow-right') }}
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>

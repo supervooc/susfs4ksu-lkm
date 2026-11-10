@@ -1,0 +1,10 @@
+    <section class="container stats-wrap" aria-label="项目概览">
+      <div class="stats reveal">
+        {%- for stat in c.STATS %}
+        <div class="stat">
+          <strong>{{ stat.value_html | safe }}</strong>
+          <span>{{ stat.label }}</span>
+        </div>
+        {%- endfor %}
+      </div>
+    </section>

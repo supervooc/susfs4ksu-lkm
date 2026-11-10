@@ -1,0 +1,41 @@
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="#top">
+            <span class="brand-mark" aria-hidden="true">
+              {{ icon('brand') }}
+            </span>
+            <span class="brand-copy">
+              <strong>susfs4ksu<span>-lkm</span></strong>
+              <small>LOADABLE KERNEL MODULE</small>
+            </span>
+            <span class="sr-only">返回顶部</span>
+          </a>
+          <p>{{ c.FOOTER_TAGLINE }}<br>{{ c.FOOTER_TAGLINE_2 }}</p>
+          <div class="footer-badges">
+            {%- for badge in c.FOOTER_BADGES %}
+            <span>{{ badge }}</span>
+            {%- endfor %}
+          </div>
+        </div>
+
+        {%- for column in c.FOOTER_COLUMNS %}
+        <div class="footer-col">
+          <h3>{{ column.title }}</h3>
+          {%- for label, href in column.links %}
+          <a href="{{ href }}"{% if href.startswith('http') %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ label }}</a>
+          {%- endfor %}
+          {%- if column.note %}
+          <span class="footer-static">{{ column.note }}</span>
+          {%- endif %}
+        </div>
+        {%- endfor %}
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span data-year>{{ year }}</span> {{ c.FOOTER_COPYRIGHT }}</p>
+        <p class="footer-disclaimer">{{ c.FOOTER_DISCLAIMER }}</p>
+      </div>
+    </div>
+  </footer>

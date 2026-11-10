@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="page-grid" aria-hidden="true"></div>
+  <div class="page-glow page-glow-a" aria-hidden="true"></div>
+  <div class="page-glow page-glow-b" aria-hidden="true"></div>
+
+  {% include "partials/header.html" %}
+
+  <main id="main">
+    {% include "partials/hero.html" %}
+    {% include "partials/stats.html" %}
+    {% include "partials/features.html" %}
+    {% include "partials/install.html" %}
+    {% include "partials/kmi.html" %}
+    {% include "partials/docs.html" %}
+    {% include "partials/faq.html" %}
+    {% include "partials/cta.html" %}
+  </main>
+
+  {% include "partials/footer.html" %}
+
+  <script src="{{ asset('main.js') }}" defer></script>
+{% endblock %}
