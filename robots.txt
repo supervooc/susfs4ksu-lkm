@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://inforcqb.github.io/susfs4ksu-for-lkm/sitemap.xml
