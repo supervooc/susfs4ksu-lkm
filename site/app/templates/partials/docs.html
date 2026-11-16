@@ -1,0 +1,32 @@
+    <section class="section" id="docs" aria-labelledby="docs-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="section-kicker">{{ c.DOCS_KICKER }}</span>
+            {% with h=c.DOCS_HEADLINE, heading_id="docs-title" %}{% include "partials/headline.html" %}{% endwith %}
+          </div>
+          <p class="reveal">{{ inline(c.DOCS_INTRO) }}</p>
+        </div>
+
+        <div class="docs-grid">
+          <div class="doc-list reveal">
+            {%- for doc in c.DOC_LINKS %}
+            <a class="doc-link" href="{{ doc.href }}" target="_blank" rel="noopener noreferrer">
+              <span class="doc-index">{{ doc.index }}</span>
+              <span><strong>{{ doc.title }}</strong><small>{{ doc.description }}</small></span>
+              {{ icon('arrow-external') }}
+            </a>
+            {%- endfor %}
+          </div>
+
+          <div class="interface-grid reveal">
+            {%- for card in c.INTERFACES %}
+            <a class="interface-card" href="{{ card.href }}" target="_blank" rel="noopener noreferrer">
+              <code>{{ card.name }}</code>
+              <p>{{ inline(card.body) }}</p>
+            </a>
+            {%- endfor %}
+          </div>
+        </div>
+      </div>
+    </section>

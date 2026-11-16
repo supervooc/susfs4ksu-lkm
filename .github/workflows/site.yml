@@ -2,14 +2,9 @@ name: site
 
 on:
   push:
-    branches: [site-python]
+    branches: [main]
     paths:
-      - app/**
-      - tests/**
-      - freeze.py
-      - wsgi.py
-      - requirements.txt
-      - requirements-dev.txt
+      - site/**
       - .github/workflows/site.yml
   schedule:
     - cron: "0 3 * * 1"  # 每周一 03:00 UTC 重建，刷新上游版本号
@@ -22,21 +17,19 @@ concurrency:
   group: site-deploy
   cancel-in-progress: true
 
-env:
-  PYTHON_VERSION: "3.12"
-
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: site-python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements*.txt
+          cache-dependency-path: site/requirements*.txt
       - run: pip install -r requirements-dev.txt
       - run: python -m pytest -q
       - name: Freeze static site
@@ -46,20 +39,21 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: static-site
-          path: public
+          path: site/public
           retention-days: 7
 
   smoke:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: site-python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements*.txt
+          cache-dependency-path: site/requirements*.txt
       - run: pip install -r requirements.txt
       - name: Probe production WSGI server (gunicorn)
         env:
@@ -82,15 +76,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: site-python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements*.txt
-      - run: pip install -r requirements.txt
+          cache-dependency-path: site/requirements*.txt
+      - run: pip install -r site/requirements.txt
       - name: Freeze static site
+        working-directory: site
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python freeze.py --out public
@@ -98,9 +91,9 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd public
+          cd site/public
           git init -q -b gh-pages
           git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "site: rebuild $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push -q --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
+          git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           echo "published to gh-pages"
