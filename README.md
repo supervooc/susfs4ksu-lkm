@@ -1,5 +1,7 @@
 # SUSFS Guard LKM 站点（Python 版）
 
+> 线上地址：<https://supervooc.github.io/susfs4ksu-lkm/> （GitHub Pages 静态版，版本号由浏览器端 live.js 刷新）
+
 原 `gh-pages` 分支是一个纯静态单页站：一个 679 行的 `index.html`、一份 `styles.css`、一个 `main.js`。
 本次重构把它变成以 Python 为核心的站点：**Flask + Jinja2 服务端渲染**，内容、图标、代码高亮、
 Release 信息、KMI 解析、下载入口全部由 Python 负责，同时保留「一键冻结成静态站」的能力，
