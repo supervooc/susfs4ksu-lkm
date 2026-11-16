@@ -6,6 +6,7 @@
   <img src="assets/title.svg" alt="susfs4ksu-lkm — SUSFS 的可加载内核模块版" width="760">
 </p>
 
+[![Website](https://img.shields.io/badge/Website-susfs4ksu--lkm-7C5CFF)](https://supervooc.github.io/susfs4ksu-lkm/)
 [![QQ 群 1125256073](https://img.shields.io/badge/QQ-1125256073-12B7F5?logo=qq&logoColor=white)](https://qm.qq.com/q/yMYVB9m0VO)
 ![Android 12+](https://img.shields.io/badge/Android-12%2B-3DDC84?logo=android&logoColor=white)
 ![arm64-v8a](https://img.shields.io/badge/arm64--v8a-6E7681?logo=arm&logoColor=white)
