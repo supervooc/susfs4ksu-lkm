@@ -80,7 +80,7 @@ site-python/
 ## 本地运行
 
 ```bash
-cd site-python
+cd site
 python -m venv .venv
 # Windows
 .venv\Scripts\activate
