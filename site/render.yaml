@@ -1,0 +1,17 @@
+# Render Blueprint：把动态版（Python 服务）一键部署到 Render。
+# 部署后在 Dashboard 里把 "Deploy to Render" 指向本文件即可。
+services:
+  - type: web
+    name: susfs-guard-lkm-site
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -b 0.0.0.0:$PORT --workers 2 wsgi:app
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.10"
+      - key: SITE_OFFLINE
+        value: "0"

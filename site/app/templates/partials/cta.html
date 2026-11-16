@@ -1,0 +1,16 @@
+    <section class="container cta-wrap" aria-labelledby="cta-title">
+      <div class="cta-panel reveal">
+        <div class="cta-grid" aria-hidden="true"></div>
+        <span class="section-kicker">{{ c.CTA_KICKER }}</span>
+        <h2 id="cta-title">{{ c.CTA_TITLE }}</h2>
+        <p>{{ c.CTA_BODY }}</p>
+        <div class="cta-actions">
+          {%- for action in c.CTA_ACTIONS %}
+          <a class="btn btn-{{ action.style }}" href="{{ action.href }}"{% if action.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+            {{ action.label }}
+            {{ icon(action.icon) }}
+          </a>
+          {%- endfor %}
+        </div>
+      </div>
+    </section>

@@ -1,0 +1,23 @@
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="section-kicker">{{ c.FEATURES_KICKER }}</span>
+            {% with h=c.FEATURES_HEADLINE, heading_id="features-title" %}{% include "partials/headline.html" %}{% endwith %}
+          </div>
+          <p class="reveal">{{ c.FEATURES_INTRO }}</p>
+        </div>
+
+        <div class="feature-grid">
+          {%- for feature in c.FEATURES %}
+          <article class="feature-card reveal">
+            <span class="feature-icon">
+              {{ icon('feature:' ~ feature.icon) }}
+            </span>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ inline(feature.body) }}</p>
+          </article>
+          {%- endfor %}
+        </div>
+      </div>
+    </section>

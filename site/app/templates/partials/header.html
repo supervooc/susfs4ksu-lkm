@@ -1,0 +1,33 @@
+<header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">
+          {{ icon('brand') }}
+        </span>
+        <span class="brand-copy">
+          <strong>susfs4ksu<span>-lkm</span></strong>
+          <small>LOADABLE KERNEL MODULE</small>
+        </span>
+        <span class="sr-only">首页</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        {%- for item in c.NAV %}
+        <a href="{{ item.href }}">{{ item.label }}</a>
+        {%- endfor %}
+      </nav>
+
+      <div class="header-actions">
+        <a class="icon-link" href="{{ c.REPO_URL }}" target="_blank" rel="noopener noreferrer" aria-label="查看 GitHub 源码">
+          {{ icon('github') }}
+        </a>
+        <a class="btn btn-primary btn-small" href="{{ c.LATEST_RELEASE_URL }}" target="_blank" rel="noopener noreferrer">
+          下载
+          {{ icon('arrow-download') }}
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
